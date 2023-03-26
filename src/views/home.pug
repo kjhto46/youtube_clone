@@ -2,8 +2,7 @@ extends base
 include mixins/video
 
 block content
-    h2 환영해요. 인기 급상승 동영상들이 있어요.     
-    each potato in videos
-        +video(potato)
+    each video in videos
+        +video(video)
     else
         li Sorry nothing found.
