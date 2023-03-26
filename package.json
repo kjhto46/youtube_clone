@@ -1,15 +1,29 @@
 {
-  "name": "clone_youtube",
+  "name": "wetube",
   "version": "1.0.0",
-  "description": "best way to watch videos",
-  "main": "index.js",
+  "description": "The best way to watch videos.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon --exec babel-node src/server.js"
   },
   "repository": {
     "type": "git",
-    "url": "(https://github.com/kjhto46/youtube_clone)"
+    "url": "git+https://github.com/kjhto46/wetube-reloaded.git"
   },
-  "author": "junheekwon",
-  "license": "MIT"
+  "author": " junheeKwon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kjhto46/wetube-reloaded/issues"
+  },
+  "homepage": "https://github.com/kjhto46/wetube-reloaded#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.19.6",
+    "@babel/node": "^7.19.1",
+    "@babel/preset-env": "^7.19.4",
+    "nodemon": "^2.0.20"
+  }
 }
