@@ -17,10 +17,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: "Hello!",
+    secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({mongoUrl:"mongodb://127.0.0.1:27017/wetube"}),
+    // cookie: { //만료날짜 설정도 가능하다.
+    //   maxAge: 20000,
+    // },
+    store: MongoStore.create({mongoUrl:process.env.DB_URL}),
   })
 );
 
