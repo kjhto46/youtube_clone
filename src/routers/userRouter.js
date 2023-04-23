@@ -7,13 +7,17 @@ import {
     startGithubLogin,
     finishGithubLogin,
 } from "../controllers/userController";
+import {
+    protectorMiddleware,
+    publicOnlyMiddleware
+} from "../middlewares";
 
 const userRouter = express.Router();
 
-userRouter.get("/logout", logout);
-userRouter.route("/edit").get(getEdit).post(postEdit);
-userRouter.get("/github/start", startGithubLogin);
-userRouter.get("/github/finish", finishGithubLogin);
+userRouter.get("/logout", protectorMiddleware, logout);
+userRouter.route("/edit").all(protectorMiddleware).get(getEdit).post(postEdit); //all은 http nethod에 여러개가 .route되는 모든 상황에 all안에 있는 middleware를 사용하겠다는 뜻이다.
+userRouter.get("/github/start", publicOnlyMiddleware, startGithubLogin);
+userRouter.get("/github/finish", publicOnlyMiddleware, finishGithubLogin);
 userRouter.get(":id", see);
 
 export default userRouter;

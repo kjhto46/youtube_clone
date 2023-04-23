@@ -173,7 +173,26 @@ export const getEdit = (req, res) => {
     });
 }
 
-export const postEdit = (req, res) => {
+export const postEdit = async (req, res) => {
+    const {
+        session: {
+            user: {
+                _id
+            }
+        },
+        body: {
+            name,
+            email,
+            username,
+            location
+        }
+    } = req;
+    await User.findByIdAndUpdate(_id, { //findByIdAndUpdate 망고db에 지원하는 함수 이름처럼 "id를 찾아서 업데이트" 이기때문에 id를 먼저 기입 그후 UpdateQuery 작성 callback으로 할수있지만 우리는 awiat를 사용
+        name,
+        email,
+        username,
+        location
+    }); // mongoDB에는 업데이트가 되었지만 user.session에는 업데이트가 안되어 값이 동일하게 보이게 된다. 이부분을 해결해보겠다.
     return res.render("edit-profile");
 }
 
