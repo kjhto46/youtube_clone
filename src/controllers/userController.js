@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 export const getJoin = (req, res) => res.render("join", {
     pageTitle: "Join"
 });
+
 export const postJoin = async (req, res) => {
     const {
         name,
@@ -68,14 +69,14 @@ export const postLogin = async (req, res) => {
     if (!user) {
         return res.status(400).render("login", {
             pageTitle,
-            errorMessage: "An account with this Username does not exists.",
+            errorMessage: "존재하지 않는 아이디 입니다.",
         });
     }
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) {
         return res.status(400).render("login", {
             pageTitle,
-            errorMessage: "Wrong password",
+            errorMessage: "비밀번호가 일치하지 않습니다.",
         });
     }
     req.session.loggedIn = true;
@@ -167,33 +168,106 @@ export const logout = (req, res) => {
     req.session.destroy();
     return res.redirect("/")
 }; //로그아웃
+
 export const getEdit = (req, res) => {
     return res.render("edit-profile", {
         pageTitle: "Edit Profile"
     });
 }
 
+// export const postEdit = async (req, res) => {
+//     const {
+//         session: {
+//             user: {
+//                 _id
+//             }
+//         },
+//         body: {
+//             name,
+//             email,
+//             username,
+//             location
+//         }
+//     } = req;
+
+//     const findUsername = await User.findOne({
+//         username
+//     });
+//     const findEmail = await User.findOne({
+//         email
+//     });
+//     if (findUsername != null && findUsername._id != _id) {
+//         return res.render("edit-profile", {
+//             pageTitle: "Edit  Profile",
+//             errorMessage: "이미 등록된 Username 입니다.",
+//         });
+//     } else if (findEmail != null && findEmail._id != _id) {
+//         return res.render("edit-profile", {
+//             pageTitle: "Edit  Profile",
+//             errorMessage: "이미 등록된 이메일입니다.",
+//         });
+//     }
+//     const updatedUser = await User.findByIdAndUpdate(_id, {
+//         name,
+//         email,
+//         username,
+//         location
+//     }, {
+//         new: true
+//     });
+//     req.session.user = updatedUser;
+
+//     return res.redirect("/users/edit");
+// }
 export const postEdit = async (req, res) => {
     const {
         session: {
             user: {
                 _id
-            }
+            },
         },
         body: {
             name,
             email,
             username,
             location
-        }
+        },
     } = req;
-    await User.findByIdAndUpdate(_id, { //findByIdAndUpdate 망고db에 지원하는 함수 이름처럼 "id를 찾아서 업데이트" 이기때문에 id를 먼저 기입 그후 UpdateQuery 작성 callback으로 할수있지만 우리는 awiat를 사용
-        name,
-        email,
-        username,
-        location
-    }); // mongoDB에는 업데이트가 되었지만 user.session에는 업데이트가 안되어 값이 동일하게 보이게 된다. 이부분을 해결해보겠다.
-    return res.render("edit-profile");
-}
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate( //findByIdAndUpdate 망고db에 지원하는 함수 이름처럼 "id를 찾아서 업데이트" 이기때문에 id를 먼저 기입 그후 UpdateQuery 작성 callback으로 할수있지만 우리는 awiat를 사용
+            _id, {
+                name,
+                email,
+                username,
+                location,
+            }, {
+                new: true
+            }
+        ); // mongoDB에는 업데이트가 되었지만 session.user에는 업데이트가 안되어 값이 동일하게 보이게 된다. 이부분을 해결해보겠다.
+        req.session.user = updatedUser; //updatedUser을  req.session.user로 덧씌우기 작업이다.
+        res.redirect("/users/edit");
+    } catch (error) {
+        console.log(error);
+        if (error.code === 11000) {
+            if (error.keyValue.username) {
+                return res.status(400).render("edit-profile", {
+                    pageTitle: "Edit Profile",
+                    errorMessage: "이미 사용중인 유저명입니다.",
+                });
+            }
+            if (error.keyValue.email) {
+                return res.status(400).render("edit-profile", {
+                    pageTitle: "Edit Profile",
+                    errorMessage: "이미 사용중인 이메일입니다.",
+                });
+            }
+        }
+        return res.status(400).render("edit-profile", {
+            pageTitle: "Edit Profile",
+            errorMessage: "업데이트에 실패하였습니다. 다시시도해주세요.",
+        });
+    }
+};
 
 export const see = (req, res) => res.send("See User");
