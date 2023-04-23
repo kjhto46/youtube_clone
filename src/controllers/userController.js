@@ -249,8 +249,8 @@ export const postEdit = async (req, res) => {
         res.redirect("/users/edit");
     } catch (error) {
         console.log(error);
-        if (error.code === 11000) {
-            if (error.keyValue.username) {
+        if (error.code === 11000) { // 상단의 console.log(error)를 통해 어느부분에서 error가 발생하는지 확인 code:11000,으로 keyValue:{}로 오류를 알려준다.
+            if (error.keyValue.username) { //keyValue: { username: 'test' } 이렇게 오류가 나타나기에 error.keyValue.username으로 작성후 edit-profile로 status(400)로 보내면서 각자에 맞는 errorMessage를 보낸다. 
                 return res.status(400).render("edit-profile", {
                     pageTitle: "Edit Profile",
                     errorMessage: "이미 사용중인 유저명입니다.",
