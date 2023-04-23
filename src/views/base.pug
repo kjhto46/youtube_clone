@@ -11,10 +11,10 @@ html(lang="ko")
                     li
                         a(href="/") Home
                     if loggedIn 
+                        li 
+                            a(href="/users/edit") #{loggedInUser.name} 프로필사진 추가
                         li  
                             a(href="/users/logout")  Log Out
-                        li 
-                            a(href="/my-profile") #{loggedInUser.name}의 프로필
                     else 
                         li
                             a(href="/join")  Join

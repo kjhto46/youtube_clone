@@ -136,11 +136,12 @@ export const finishGithubLogin = async (req, res) => {
             (email) => email.primary === true && email.verified === true
         );
         if (!emailObj) {
+            //set notification 유저가 github를 통해 로그인했으나 verified 된 이메일이 없으니 믿을수 없다고 내용을 추가할수있다.
             return res.redirect("/login");
         }
         let user = await User.findOne({
             email: emailObj.email
-        });
+        }); //primary하고 verified한 email을 찾았다면 email을 기준으로 유저를 mongoDB에 있는지 확인을 한다.
         if (!user) {
             user = await User.create({
                 avatarUrl: userData.avatar_url,
@@ -148,10 +149,10 @@ export const finishGithubLogin = async (req, res) => {
                 username: userData.login,
                 email: emailObj.email,
                 password: "",
-                socialOnly: true,
+                socialOnly: true, //socialOnly true 로 'const postLogin' 에서 false로 되어있던 값인지 true인지 확인하기 위해 false면 username과 password로 이루워진 유저고 true면 소셜로그인을 한 유저이기 때문
                 location: userData.location,
             });
-        }
+        } //user 값이 없다면 github에서 제공하는 데이터로 추가한다.
         req.session.loggedIn = true;
         req.session.user = user;
         return res.redirect("/");
@@ -165,7 +166,15 @@ export const finishGithubLogin = async (req, res) => {
 export const logout = (req, res) => {
     req.session.destroy();
     return res.redirect("/")
-};
-export const edit = (req, res) => res.send("Edit User");
-export const remove = (req, res) => res.send("Remove User");
+}; //로그아웃
+export const getEdit = (req, res) => {
+    return res.render("edit-profile", {
+        pageTitle: "Edit Profile"
+    });
+}
+
+export const postEdit = (req, res) => {
+    return res.render("edit-profile");
+}
+
 export const see = (req, res) => res.send("See User");
