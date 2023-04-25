@@ -278,8 +278,38 @@ export const getChangePassword = (req, res) => {
         pageTitle: "Change Password"
     })
 };
-export const postChangePassword = (req, res) => {
-    //send notification
-    return res.redirect("/");
+export const postChangePassword = async (req, res) => {
+    const {
+        session: {
+            user: {
+                _id,
+            },
+        },
+        body: {
+            oldPassword,
+            newPassword,
+            newPasswordConfirmation
+        },
+    } = req; //누가 로그인한건지 알기위해
+    // 이전 비밀번호가 입력한 이전비밀번호와 같은지
+    const user = await User.findById(_id); //ID명인 `_id`로 user를 찾아서 user로 const를 만들어서 하단에 있는 내용을 편하게 만들기 
+    const ok = await bcrypt.compare(oldPassword, user.password); //user.password를 불러와서 마지막에 session.password와 form에 있는 password값을 동일하게 하는거를 스킵했다.postEdit에서는  req.session.user = updatedUser; 이런식으로 업데이트를 했었는데 같지만 차이가 있다.
+    if (!ok) {
+        return res.status(400).render("users/change-password", {
+            pageTitle: "Change Password",
+            errorMessage: "기존 비밀번호가 일치하지 않습니다."
+        })
+    }
+    // 입력한 비밀번호가 확인 입력한거랑 동일한지
+    if (newPassword !== newPasswordConfirmation) {
+        return res.status(400).render("users/change-password", {
+            pageTitle: "Change Password",
+            errorMessage: "비밀번호가 일치하지 않습니다."
+        })
+    }
+    user.password = newPassword;
+    await user.save();
+    req.session.user.password = user.password; // 
+    return res.redirect("/users/logout");
 };
 export const see = (req, res) => res.send("See User");
