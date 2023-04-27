@@ -223,7 +223,8 @@ export const postEdit = async (req, res) => {
     const {
         session: {
             user: {
-                _id
+                _id,
+                avatarUrl
             },
         },
         body: {
@@ -240,6 +241,7 @@ export const postEdit = async (req, res) => {
     try {
         const updatedUser = await User.findByIdAndUpdate( //findByIdAndUpdate 망고db에 지원하는 함수 이름처럼 "id를 찾아서 업데이트" 이기때문에 id를 먼저 기입 그후 UpdateQuery 작성 callback으로 할수있지만 우리는 awiat를 사용
             _id, {
+                avatarUrl: file ? file.path : avatarUrl,
                 name,
                 email,
                 username,
