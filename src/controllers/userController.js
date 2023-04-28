@@ -224,7 +224,7 @@ export const postEdit = async (req, res) => {
         session: {
             user: {
                 _id,
-                avatarUrl
+                avatarUrl,
             },
         },
         body: {
@@ -234,7 +234,7 @@ export const postEdit = async (req, res) => {
             location,
             avatar,
         },
-        // file : {path}, 이렇게 수정하면 안되는 이유 path값을 변경하는 식으로 작업하면  file값이 존재하지 않았을때 에러가 난다.
+        // file : {path}, 이렇게 수정하면 안되는 이유 path값을 변경하는 식으로 작업하면  file값이 존재하지 않았을때(undefined이기때문에) 에러가 난다.
         file
     } = req;
     console.log(file);
@@ -242,7 +242,7 @@ export const postEdit = async (req, res) => {
     try {
         const updatedUser = await User.findByIdAndUpdate( //findByIdAndUpdate 망고db에 지원하는 함수 이름처럼 "id를 찾아서 업데이트" 이기때문에 id를 먼저 기입 그후 UpdateQuery 작성 callback으로 할수있지만 우리는 awiat를 사용
             _id, {
-                avatarUrl: file ? file.path : avatarUrl,
+                avatarUrl: file ? file.path : avatarUrl, // (?)유저가 form으로 파일을 보낸다면 file.path를 사용하고 (:)존재하지 않는다면 기존의 avatarUrl을 사용할것이다.
                 name,
                 email,
                 username,
