@@ -234,6 +234,7 @@ export const postEdit = async (req, res) => {
             location,
             avatar,
         },
+        // file : {path}, 이렇게 수정하면 안되는 이유 path값을 변경하는 식으로 작업하면  file값이 존재하지 않았을때 에러가 난다.
         file
     } = req;
     console.log(file);
