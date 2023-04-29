@@ -3,7 +3,8 @@ extends base.pug
 block content
     if errorMessage
         span=errorMessage
-    form(method="POST")
+    //- multer를 이용해서 작업할때는 form에 enctype="multipart/form-data" 를 잊지말자
+    form(method="POST" enctype="multipart/form-data") 
         label(for="video") Video File
         input(type="file" accept="video/*" required, id="video", name="video")
         input(placeholder="Title", required, type="text", name="title" maxlength=80)
