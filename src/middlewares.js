@@ -25,6 +25,16 @@ export const publicOnlyMiddleware = (req, res, next) => {
     }
 };
 
-export const uploadFiles = multer({
-    dest: "uploads/"
+export const avatarUpload = multer({
+    dest: "uploads/avatars/",
+    limits: {
+        fileSize: 3000000,
+    }
+}); //multer라는 middleware로 이미지에 대한 정보를 저장
+
+export const videoUpload = multer({
+    dest: "uploads/avatars/",
+    limits: {
+        fileSize: 20000000,
+    }
 });
