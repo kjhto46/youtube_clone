@@ -14,6 +14,8 @@ html(lang="ko")
                         li
                             a(href="/videos/upload") Upload Video
                         li 
+                            a(href=`/users/${loggedInUser._id}`) 내 프로필 
+                        li 
                             a(href="/users/edit") #{loggedInUser.name} 프로필 업데이트
                         li  
                             a(href="/users/logout")  Log Out
