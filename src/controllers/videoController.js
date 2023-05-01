@@ -31,11 +31,19 @@ export const getEdit = async (req, res) => {
   const {
     id
   } = req.params;
+  const {
+    user: {
+      _id
+    }
+  } = req.session;
   const video = await Video.findById(id);
   if (!video) {
     return res.status(404).render("404", {
       pageTitle: "Video not found."
     });
+  }
+  if (String(video.owner) !== String(_id)) {
+    return res.status(403).redirect("/");
   }
   return res.render("edit", {
     pageTitle: `Edit: ${video.title}`,
@@ -44,6 +52,11 @@ export const getEdit = async (req, res) => {
 };
 
 export const postEdit = async (req, res) => {
+  const {
+    user: {
+      _id
+    }
+  } = req.session;
   const {
     id
   } = req.params;
@@ -59,6 +72,9 @@ export const postEdit = async (req, res) => {
     return res.status(404).render("404", {
       pageTitle: "Video not found."
     });
+  }
+  if (String(video.owner) !== String(_id)) {
+    return res.status(403).redirect("/");
   }
   await Video.findByIdAndUpdate(id, {
     title,
@@ -112,7 +128,39 @@ export const deleteVideo = async (req, res) => {
   const {
     id
   } = req.params;
+  const {
+    user: {
+      _id
+    }
+  } = req.session;
+  const video = await Video.findById(id);
+  const user = await User.findById(_id);
+
+  if (!video) {
+    return res.status(404).render("404", {
+      pageTitle: "Video not found."
+    });
+  }
+
+  if (String(video.owner) !== String(_id)) {
+    return res.status(403).redirect("/");
+  }
+  //비디오 object 삭제
   await Video.findByIdAndDelete(id);
+  // db.user 안의 "videos" ID 삭제
+  // 방법 1. filter를 사용해서 기존의 배열을 수정하지않고 새로운 배열을 생성하여 할당한다.
+  // 1. user.videos 배열에서 filter() 함수로 주어진 함수를 통과하는 모든 요소를 모아 새로운 배열을 만든다.(true인 경우만)
+  // 2. String(videoId) !== String(id) 는 각각 'videoId'와 'id'를 문자열로 변환한 후, 두 값이 다를 경우 true를 반환합니다. 이렇게 함으로써 'user.videos' 배열에서 해당하는 'id'를 가진 요소만 제외하게 됩니다.
+  // 헷갈렸던 부분인 'videoId'라는 값이 없지 않냐에 대해 말하자면 이것은 배열안에 ObjectId 라고 되어있는부분 id값을 말하는것이다.
+  // (예시1번)///////// user.videos = user.videos.filter(videoId => String(videoId) !== String(id));
+  // const videoIds = user.videos.map(videoId => String(videoId));
+  // console.log(videoIds); 이방법으로 헷갈리던 videoId의 값들을 확인해볼수있을것이다.
+
+  // 방법 2. splice를 사용하고 기존의 배열에서 특정요소를 제거하는 방법
+  // user.videos 배열에서 indexOf 를 사용하여 삭제할 요소의 인덱스를 찾은 다음 splice를 사용하여 해당 인덱스의 요소를 삭제 1 이라는것은 배열에서 id 값과 일치하는 요소를 찾아서 해당 요소를 1개만큼 삭제하는 것을 의미
+  user.videos.splice(user.videos.indexOf(id), 1);
+  await user.save();
+
   return res.redirect("/");
 };
 
