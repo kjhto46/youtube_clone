@@ -38,6 +38,11 @@ const videoSchema = new mongoose.Schema({
       required: true
     },
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "User"
+  }, //refernce 도 추가해줄 필요가 있다. mongoose에게 owner에 id를 저장하겠다고 알려주는데 어떤 model의 ObjectId를 사용하지는지 알려주기 위해
 });
 
 videoSchema.static('formatHashtags', function (hashtags) {

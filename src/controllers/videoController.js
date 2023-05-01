@@ -1,4 +1,5 @@
 import Video from "../models/Video";
+import User from "../models/User";
 
 export const home = async (req, res) => {
   const videos = await Video.find({}).sort({
@@ -15,6 +16,8 @@ export const watch = async (req, res) => {
     id
   } = req.params;
   const video = await Video.findById(id);
+  const owner = await User.findById(video.owner);
+  console.log(owner)
   if (!video) {
     return res.status(404).render("404", {
       pageTitle: "Video not found."
@@ -22,7 +25,8 @@ export const watch = async (req, res) => {
   }
   return res.render("watch", {
     pageTitle: video.title,
-    video
+    video,
+    owner
   });
 };
 
@@ -75,6 +79,11 @@ export const getUpload = (req, res) => {
 
 export const postUpload = async (req, res) => {
   const {
+    user: {
+      _id
+    }
+  } = req.session;
+  const {
     path: fileUrl
   } = req.file; //multer는 req.file을 제공해주는데 그 file안에는 path가 있다.
   const {
@@ -87,6 +96,7 @@ export const postUpload = async (req, res) => {
       title,
       description,
       fileUrl, //fileUrl을 model/video안 'videoSchema'에 만들어둬야한다.
+      owner: _id,
       hashtags: Video.formatHashtags(hashtags),
     });
     return res.redirect("/");
