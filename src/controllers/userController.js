@@ -1,4 +1,5 @@
 import User from "../models/User";
+import Video from "../models/Video";
 import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
@@ -324,14 +325,18 @@ export const see = async (req, res) => {
     const {
         id
     } = req.params;
+    const user = await User.findById(id);
     if (!user) {
         return res.status(404).render("404", {
             pageTitle: "찾을 수 없는 유저입니다."
         });
     }
-    const user = await User.findById(id);
+    const videos = await Video.find({
+        owner: user._id
+    });
     return res.render("users/profile", {
         pageTitle: `${user.name}의 프로필`,
-        user
-    })
+        user,
+        videos,
+    });
 };
