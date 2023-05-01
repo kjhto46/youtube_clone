@@ -325,18 +325,14 @@ export const see = async (req, res) => {
     const {
         id
     } = req.params;
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("videos");
     if (!user) {
         return res.status(404).render("404", {
             pageTitle: "찾을 수 없는 유저입니다."
         });
     }
-    const videos = await Video.find({
-        owner: user._id
-    });
     return res.render("users/profile", {
         pageTitle: `${user.name}의 프로필`,
         user,
-        videos,
     });
 };

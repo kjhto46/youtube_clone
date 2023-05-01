@@ -2,7 +2,7 @@ extends ../base
 include ../mixins/video
 
 block content
-   each video in videos 
+   each video in user.videos 
       +video(video)
    else 
       li 업로드한 비디오가 없습니다.

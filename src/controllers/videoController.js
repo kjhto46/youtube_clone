@@ -89,13 +89,16 @@ export const postUpload = async (req, res) => {
     hashtags
   } = req.body;
   try {
-    await Video.create({
+    const newVideo = await Video.create({
       title,
       description,
       fileUrl, //fileUrl을 model/video안 'videoSchema'에 만들어둬야한다.
-      owner: _id,
+      owner: _id, //유저의 'id'를 'video'의 'owner'에 추가 하고있다.
       hashtags: Video.formatHashtags(hashtags),
     });
+    const user = await User.findById(_id);
+    user.videos.push(newVideo._id);
+    user.save();
     return res.redirect("/");
   } catch (error) {
     return res.status(400).render("upload", {
