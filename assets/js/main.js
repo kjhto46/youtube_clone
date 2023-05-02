@@ -1,0 +1,1 @@
+(async()=>{alert("안녕!"),await fetch("")})();
