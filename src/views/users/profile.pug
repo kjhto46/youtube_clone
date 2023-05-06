@@ -2,8 +2,12 @@ extends ../base
 include ../mixins/video
 
 block content
-   each video in user.videos 
-      +video(video)
-   else 
-      li 업로드한 비디오가 없습니다.
+   .profile__data 
+      img(src="/" + user.avatarUrl).avatar
+      h3=user.name
+   .video-grid 
+      each video in user.videos 
+         +video(video)
+      else 
+         span.empty__message 업로드한 비디오가 없습니다.
 
