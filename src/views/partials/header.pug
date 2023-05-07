@@ -18,14 +18,14 @@ header
                     a(href="/users/edit") #{loggedInUser.name} 프로필 수정
                 li  
                     a(href="/users/logout")  Log Out
-                li 
+                li
                     a(href=`/users/${loggedInUser._id}`)
-                        if loggedInUser.avatarUrl === "" 
+                        if !loggedInUser.avatarUrl
                             span 😀
                         else
                             img.header__avatar(src="/" + loggedInUser.avatarUrl)
-            else 
+            else
                 li
-                    a(href="/login")  Login
-                li 
-                    a(href="/join").header__btn Join 
+                    a(href="/login")  Login                        
+                li
+                    a(href="/join").header__btn  Join
