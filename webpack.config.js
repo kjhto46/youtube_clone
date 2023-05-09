@@ -2,7 +2,10 @@ const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-   entry: "./src/client/js/main.js", //entry : "경로에 있는" 파일을 가져오고
+   entry: {
+      main:"./src/client/js/main.js",
+      videoPlayer:"./src/client/js/videoPlayer.js"
+   }, //entry : "경로에 있는" 파일을 가져오고
    mode: "development",
    watch: true, //npm run assets 로 webpack를 실행시키면 계속 할필요없이 변화를 지켜본다.
    plugins: [
@@ -11,7 +14,7 @@ module.exports = {
       })
    ],
    output: {
-      filename: "js/main.js", //파일 이름은 이것
+      filename: "js/[name].js", //파일 이름은 // 이것 [name]으로 entry에 있던 이름으로 따로 세팅 가능
       path: path.resolve(__dirname, "assets"), // 변환되서 저장되는 폴더는 이곳
       clean: true, //clean은 output folder를 build 시작하기전에 clean 해준다
    },
