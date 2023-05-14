@@ -4,10 +4,35 @@ const muteBtn = document.getElementById("mute");
 const volumeRange = document.getElementById("volume");
 const currenTime = document.getElementById("currenTime");
 const totalTime = document.getElementById("totalTime");
+const timeline = document.getElementById("timeline");
 
 let volumeValue = 0.5;
 video.volume = volumeValue;
 
+const formatTime = (seconds) => {
+   const date = new Date(null);
+   date.setSeconds(seconds);
+   const hours = date.getUTCHours();
+   const minutes = date.getUTCMinutes();
+   const sec = date.getUTCSeconds();
+   
+   let formattedTime = '';
+   if (hours > 0) {
+     formattedTime += hours + ':';
+   }
+   if (hours > 0 && minutes < 10) {
+     formattedTime += '0';
+   } else if (hours === 0 && minutes < 10) {
+     formattedTime += '0';
+   }
+   formattedTime += minutes + ':';
+   if (sec < 10) {
+     formattedTime += '0';
+   }
+   formattedTime += sec;
+ 
+   return formattedTime;
+};
 const handlePlayClick = (e) => {
    //비디오가 시작중이라면 멈추고
    if(video.paused) {
@@ -44,25 +69,47 @@ const handleVolumeChange = (event) => {
    }
 }
 
-const handelLoadedMetadata = () => {
-   totalTime.innerText = Math.floor(video.duration);
+const handelLoadedMetadata = () => { //전체 시간 설정
+   totalTime.innerText = formatTime(Math.floor(video.duration)); // 안에 텍스트를 시간과 동일하게 설정
+   timeline.max = Math.floor(video.duration);
+
 }
 
-const handleTimeUpdate = () => {
-   currenTime.innerText = Math.floor(video.currentTime);
+const handleTimeUpdate = () => { // 헨들 시간 설정
+   currenTime.innerText = formatTime(Math.floor(video.currentTime)); // 안에 텍스트를 시간과 동일하게 설정
+   timeline.value = Math.floor(video.currentTime);
+
+   console.log(timeline.value);
+   console.log(Math.floor(video.duration));
+   if(Math.floor(video.currentTime) === Math.floor(video.duration)){ //currentTime과 duration은 모두 초 단위이므로, Math.floor() 함수를 이용해서 정수로 변환한 뒤에 비교해주어야 한다.
+      playBtn.innerText = "다시실행";
+   }
 }
+
+const handleTimelineChange = (event) => {
+   const {
+      target : {value},
+   } = event;
+   video.currentTime = value;
+   console.log(event.target.value);
+}
+
 
 playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMute);
 volumeRange.addEventListener("input", handleVolumeChange);
-video.addEventListener("timeupdate", handleTimeUpdate);
-
-
 
 video.readyState
 ? handelLoadedMetadata()
 : video.addEventListener("loadedmetadata", handelLoadedMetadata);
 
+video.addEventListener("timeupdate", handleTimeUpdate);
+timeline.addEventListener("input", handleTimelineChange);
 
+window.addEventListener("keydown", function (event) {
+   if (event.code == "Space") {
+   handlePlayClick();
+   }
+}); //keydown 함수로 Spacebar 눌렀을때 실행
 
 
