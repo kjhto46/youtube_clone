@@ -10,6 +10,7 @@ const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
 
 let controlsTimeout = null;
+let controlsMovementTimeout = null;
 let volumeValue = 0.5;
 video.volume = volumeValue;
 
@@ -113,18 +114,24 @@ const handleFullScreenBtn = (event) => {
    }
 }
 
+const hideControls = () => videoControls.classList.remove("showing");
+
 const handleMouseMove = () => {
    if(controlsTimeout) {
       clearTimeout(controlsTimeout);
       controlsTimeout = null;
    }
+   if(controlsMovementTimeout) {
+      clearTimeout(controlsMovementTimeout);
+      controlsMovementTimeout = null;
+   }
+
    videoControls.classList.add("showing");
+   controlsMovementTimeout = setTimeout(hideControls, 1000);
 }
 
 const handleMouseLeave = () => {
-   controlsTimeout = setTimeout(() => {
-      videoControls.classList.remove("showing");
-   },500);
+   controlsTimeout = setTimeout(hideControls, 500);
 }
 
 playBtn.addEventListener("click", handlePlayClick);
@@ -138,11 +145,23 @@ video.readyState
 video.addEventListener("timeupdate", handleTimeUpdate);
 timeline.addEventListener("input", handleTimelineChange);
 
+
 window.addEventListener("keydown", function (event) {
    if (event.code == "Space") {
-   handlePlayClick();
+      handlePlayClick();
    }
-}); //keydown 함수로 Spacebar 눌렀을때 실행
+   if (event.code == "KeyM" || event.code == "Keym") {
+      handleMute();
+   }
+   if (event.code == "KeyF" || event.code == "Keyf") {
+      const fullScreen = document.fullscreenElement;
+      if(fullScreen) {
+         document.exitFullscreen();
+      } else {
+         videoContainer.requestFullscreen();
+      }
+   }
+});
 
 fullScreenBtn.addEventListener("click", handleFullscreen);
 videoContainer.addEventListener("fullscreenchange", handleFullScreenBtn);
