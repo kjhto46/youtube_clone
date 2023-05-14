@@ -5,6 +5,8 @@ const volumeRange = document.getElementById("volume");
 const currenTime = document.getElementById("currenTime");
 const totalTime = document.getElementById("totalTime");
 const timeline = document.getElementById("timeline");
+const fullScreenBtn = document.getElementById("fullScreen");
+const videoContainer = document.getElementById("videoContainer");
 
 let volumeValue = 0.5;
 video.volume = volumeValue;
@@ -79,8 +81,6 @@ const handleTimeUpdate = () => { // 헨들 시간 설정
    currenTime.innerText = formatTime(Math.floor(video.currentTime)); // 안에 텍스트를 시간과 동일하게 설정
    timeline.value = Math.floor(video.currentTime);
 
-   console.log(timeline.value);
-   console.log(Math.floor(video.duration));
    if(Math.floor(video.currentTime) === Math.floor(video.duration)){ //currentTime과 duration은 모두 초 단위이므로, Math.floor() 함수를 이용해서 정수로 변환한 뒤에 비교해주어야 한다.
       playBtn.innerText = "다시실행";
    }
@@ -91,7 +91,24 @@ const handleTimelineChange = (event) => {
       target : {value},
    } = event;
    video.currentTime = value;
-   console.log(event.target.value);
+}
+
+const handleFullscreen = (event) => {
+   const fullScreen = document.fullscreenElement;
+   if(fullScreen) {
+      document.exitFullscreen();
+   } else {
+      videoContainer.requestFullscreen();
+   }
+}
+
+const handleFullScreenBtn = (event) => {
+   const fullScreen = document.fullscreenElement;
+   if (fullScreen) {
+      fullScreenBtn.innerText = "Exit Full Screen";
+      } else {
+      fullScreenBtn.innerText = "Enter Full Screen";
+   }
 }
 
 
@@ -112,4 +129,5 @@ window.addEventListener("keydown", function (event) {
    }
 }); //keydown 함수로 Spacebar 눌렀을때 실행
 
-
+fullScreenBtn.addEventListener("click", handleFullscreen);
+videoContainer.addEventListener("fullscreenchange", handleFullScreenBtn);
