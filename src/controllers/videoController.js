@@ -179,3 +179,7 @@ export const search = async (req, res) => {
     videos
   });
 };
+
+export const registerView = (req,res) => {
+  
+}
