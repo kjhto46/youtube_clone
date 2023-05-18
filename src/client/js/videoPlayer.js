@@ -88,7 +88,7 @@ const handleTimeUpdate = () => { // 헨들 시간 설정
    timeline.value = Math.floor(video.currentTime);
 
    if(Math.floor(video.currentTime) === Math.floor(video.duration)){ //currentTime과 duration은 모두 초 단위이므로, Math.floor() 함수를 이용해서 정수로 변환한 뒤에 비교해주어야 한다.
-      playBtn.innerText = "다시실행";
+      playBtn.classList = "";
    }
 }
 
