@@ -78,15 +78,10 @@ const handleDownload = async () => {
   actionBtn.addEventListener("click", handleStart);
 };
 
-const handleStop = () => {
-  actionBtn.innerText = "영상 다운로드";
-  actionBtn.removeEventListener("click", handleStop);
-  actionBtn.addEventListener("click", handleDownload);
-  recorder.stop();
-}
 
 const handleStart = () => {
-  actionBtn.innerText = "녹화종료";
+  actionBtn.innerText = "녹화중";
+  actionBtn.disabled = true;
   actionBtn.removeEventListener("click", handleStart);
   actionBtn.addEventListener("click", handleStop);
   recorder = new MediaRecorder(stream, {
@@ -98,8 +93,14 @@ const handleStart = () => {
     video.src = videoFile;
     video.loop = true;
     video.play();
+    actionBtn.innerText = "다운로드";
+    actionBtn.disabled = false;
+    actionBtn.addEventListener("click", handleDownload);
   };
   recorder.start();
+  setTimeout(() => {
+    recorder.stop();
+  }, 5000);
 };
 
 const init = async () => {
