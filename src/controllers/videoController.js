@@ -2,7 +2,9 @@ import Video from "../models/Video";
 import User from "../models/User";
 
 export const home = async (req, res) => {
-  const videos = await Video.find({}).sort({createdAt:"desc"}).populate("owner");
+  const videos = await Video.find({}).sort({
+    createdAt: "desc"
+  }).populate("owner");
   return res.render("home", {
     pageTitle: "Home",
     videos
@@ -95,8 +97,10 @@ export const postUpload = async (req, res) => {
     }
   } = req.session;
   const {
-    path: fileUrl
-  } = req.file; //multer는 req.file을 제공해주는데 그 file안에는 path가 있다.
+    video,
+    thumb
+  } = req.files;
+  console.log(video, thumb);
   const {
     title,
     description,
@@ -106,7 +110,8 @@ export const postUpload = async (req, res) => {
     const newVideo = await Video.create({
       title,
       description,
-      fileUrl, //fileUrl을 model/video안 'videoSchema'에 만들어둬야한다.
+      fileUrl: video[0].path,
+      thumbUrl: thumb[0].path,
       owner: _id, //유저의 'id'를 'video'의 'owner'에 추가 하고있다.
       hashtags: Video.formatHashtags(hashtags),
     });
@@ -180,10 +185,12 @@ export const search = async (req, res) => {
   });
 };
 
-export const registerView = async(req,res) => {
-  const {id} = req.params;
+export const registerView = async (req, res) => {
+  const {
+    id
+  } = req.params;
   const video = await Video.findById(id);
-  if(!video){
+  if (!video) {
     //
     return res.sendStatus(404);
   }
