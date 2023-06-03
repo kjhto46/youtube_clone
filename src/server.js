@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import session from "express-session";
+import flash from "express-flash";
 import MongoStore from "connect-mongo";
 import rootRouter from "./routers/rootRouter";
 import videoRouter from "./routers/videoRouter";
@@ -42,7 +43,7 @@ app.use(
   })
 );
 
-
+app.use(flash());
 app.use(localsMiddleware);
 app.use("/uploads", express.static("uploads")); //uploads라는 라우터를만들고 express.static() 함수는 정적 파일을 제공하는 미들웨어 함수입니다. express.static() 함수를 사용하면 Express.js 애플리케이션에서 정적 파일(이미지, CSS, JavaScript 파일 등)을 서비스할 수 있습니다. 
 app.use("/static", express.static("assets"));

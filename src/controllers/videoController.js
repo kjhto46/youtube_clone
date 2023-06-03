@@ -43,6 +43,7 @@ export const getEdit = async (req, res) => {
     });
   }
   if (String(video.owner) !== String(_id)) {
+    req.flash("error", "비디오의 작성자가 아닙니다.");
     return res.status(403).redirect("/");
   }
   return res.render("edit", {
@@ -100,7 +101,6 @@ export const postUpload = async (req, res) => {
     video,
     thumb
   } = req.files;
-  console.log(video, thumb);
   const {
     title,
     description,
@@ -110,7 +110,7 @@ export const postUpload = async (req, res) => {
     const newVideo = await Video.create({
       title,
       description,
-      fileUrl: video[0].path,
+      fileUrl: video[0].path, //상단에 있는 video, thumb은 array이기때문에 이렇게 작성
       thumbUrl: thumb[0].path,
       owner: _id, //유저의 'id'를 'video'의 'owner'에 추가 하고있다.
       hashtags: Video.formatHashtags(hashtags),
