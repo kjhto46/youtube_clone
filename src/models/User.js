@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     location: String,
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment"
+    }],
     videos: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Video"
