@@ -24,27 +24,27 @@ const formatTime = (seconds) => {
    const hours = date.getUTCHours();
    const minutes = date.getUTCMinutes();
    const sec = date.getUTCSeconds();
-   
+
    let formattedTime = '';
    if (hours > 0) {
-     formattedTime += hours + ':';
+      formattedTime += hours + ':';
    }
    if (hours > 0 && minutes < 10) {
-     formattedTime += '0';
+      formattedTime += '0';
    } else if (hours === 0 && minutes < 10) {
-     formattedTime += '0';
+      formattedTime += '0';
    }
    formattedTime += minutes + ':';
    if (sec < 10) {
-     formattedTime += '0';
+      formattedTime += '0';
    }
    formattedTime += sec;
- 
+
    return formattedTime;
 };
 const handlePlayClick = (e) => {
    //비디오가 시작중이라면 멈추고
-   if(video.paused) {
+   if (video.paused) {
       video.play();
    } else {
       playBtnIcon.classList = "fas fa-play";
@@ -55,25 +55,29 @@ const handlePlayClick = (e) => {
 
 const handleMuteClick = (e) => {
    if (video.muted) {
-     video.muted = false;
+      video.muted = false;
    } else {
-     video.muted = true;
+      video.muted = true;
    }
-   muteBtnIcon.classList = video.muted
-     ? "fas fa-volume-mute"
-     : "fas fa-volume-up";
+   muteBtnIcon.classList = video.muted ?
+      "fas fa-volume-mute" :
+      "fas fa-volume-up";
    volumeRange.value = video.muted ? 0 : volumeValue;
- };
+};
 const handleVolumeChange = (event) => {
-   const {target : {value}} = event;
+   const {
+      target: {
+         value
+      }
+   } = event;
    volumeValue = value;
    video.volume = volumeValue;
    if (video.volume === 0) {
-   video.muted = true;
-   muteBtnIcon.classList = "fas fa-volume-mute";
+      video.muted = true;
+      muteBtnIcon.classList = "fas fa-volume-mute";
    } else {
-   video.muted = false;
-   muteBtnIcon.classList = "fas fa-volume-up";
+      video.muted = false;
+      muteBtnIcon.classList = "fas fa-volume-up";
    }
 }
 
@@ -87,14 +91,16 @@ const handleTimeUpdate = () => { // 헨들 시간 설정
    currenTime.innerText = formatTime(Math.floor(video.currentTime)); // 안에 텍스트를 시간과 동일하게 설정
    timeline.value = Math.floor(video.currentTime);
 
-   if(Math.floor(video.currentTime) === Math.floor(video.duration)){ //currentTime과 duration은 모두 초 단위이므로, Math.floor() 함수를 이용해서 정수로 변환한 뒤에 비교해주어야 한다.
+   if (Math.floor(video.currentTime) === Math.floor(video.duration)) { //currentTime과 duration은 모두 초 단위이므로, Math.floor() 함수를 이용해서 정수로 변환한 뒤에 비교해주어야 한다.
       playBtn.classList = "";
    }
 }
 
 const handleTimelineChange = (event) => {
    const {
-      target : {value},
+      target: {
+         value
+      },
    } = event;
    video.currentTime = value;
 }
@@ -102,22 +108,22 @@ const handleTimelineChange = (event) => {
 const handleFullscreen = () => {
    const fullscreen = document.fullscreenElement;
    if (fullscreen) {
-     document.exitFullscreen();
-     fullScreenIcon.classList = "fas fa-expand";
+      document.exitFullscreen();
+      fullScreenIcon.classList = "fas fa-expand";
    } else {
-     videoContainer.requestFullscreen();
-     fullScreenIcon.classList = "fas fa-compress";
+      videoContainer.requestFullscreen();
+      fullScreenIcon.classList = "fas fa-compress";
    }
- };
+};
 
 const hideControls = () => videoControls.classList.remove("showing");
 
 const handleMouseMove = () => {
-   if(controlsTimeout) {
+   if (controlsTimeout) {
       clearTimeout(controlsTimeout);
       controlsTimeout = null;
    }
-   if(controlsMovementTimeout) {
+   if (controlsMovementTimeout) {
       clearTimeout(controlsMovementTimeout);
       controlsMovementTimeout = null;
    }
@@ -131,9 +137,11 @@ const handleMouseLeave = () => {
 }
 
 const handleEnded = () => {
-   const {id} = videoContainer.dataset;
+   const {
+      id
+   } = videoContainer.dataset;
    fetch(`/api/videos/${id}/view`, {
-      method:"POST",
+      method: "POST",
    })
 }
 
@@ -141,27 +149,29 @@ playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMuteClick);
 volumeRange.addEventListener("input", handleVolumeChange);
 
-video.readyState
-? handelLoadedMetadata()
-: video.addEventListener("loadedmetadata", handelLoadedMetadata);
+video.readyState ?
+   handelLoadedMetadata() :
+   video.addEventListener("loadedmetadata", handelLoadedMetadata);
 
 video.addEventListener("timeupdate", handleTimeUpdate);
 timeline.addEventListener("input", handleTimelineChange);
 
-
 window.addEventListener("keydown", function (event) {
-   if (event.code == "Space") {
-      handlePlayClick();
-   }
-   if (event.code == "KeyM" || event.code == "Keym") {
-      handleMuteClick();
-   }
-   if (event.code == "KeyF" || event.code == "Keyf") {
-      const fullScreen = document.fullscreenElement;
-      if(fullScreen) {
-         document.exitFullscreen();
-      } else {
-         videoContainer.requestFullscreen();
+   if (event.target.id !== "commentTextArea") {
+      if (event.code == "Space") {
+         event.preventDefault(); //화면 내려감 방지
+         handlePlayClick();
+      }
+      if (event.code == "KeyM" || event.code == "Keym") {
+         handleMuteClick();
+      }
+      if (event.code == "KeyF" || event.code == "Keyf") {
+         const fullScreen = document.fullscreenElement;
+         if (fullScreen) {
+            document.exitFullscreen();
+         } else {
+            videoContainer.requestFullscreen();
+         }
       }
    }
 });
