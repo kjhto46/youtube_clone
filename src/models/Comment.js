@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+delete mongoose.connection.models["Comment"];
+
 const commentSchema = new mongoose.Schema({
    text: {
       type: String,

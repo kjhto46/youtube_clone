@@ -16,7 +16,7 @@ export const watch = async (req, res) => {
   const {
     id
   } = req.params;
-  const video = await Video.findById(id).populate("owner"); // populate는 MongoDB에서 조인과 유사한 동작을 수행하는 Mongoose 메서드입니다. populate() 메서드는 참조 필드에 대한 정보를 가져오는 데 사용됩니다. 지금 같은 경우는 기존에는 owner는 단순한 텍스트였지만, populate를 사용하고 owner를 불러올때는  await User.findById(video.owner); 의 값처럼 정보를 가지고온다.
+  const video = await Video.findById(id).populate("owner").populate("comments"); // populate는 MongoDB에서 조인과 유사한 동작을 수행하는 Mongoose 메서드입니다. populate() 메서드는 참조 필드에 대한 정보를 가져오는 데 사용됩니다. 지금 같은 경우는 기존에는 owner는 단순한 텍스트였지만, populate를 사용하고 owner를 불러올때는  await User.findById(video.owner); 의 값처럼 정보를 가지고온다.
   if (!video) {
     return res.status(404).render("404", {
       pageTitle: "Video not found."
@@ -213,9 +213,7 @@ export const createComment = async (req, res) => {
       id
     },
   } = req;
-
   const video = await Video.findById(id);
-
   if (!video) {
     return res.sendStatus(404);
   }
@@ -223,6 +221,8 @@ export const createComment = async (req, res) => {
     text,
     owner: user._id,
     video: id,
-  })
+  });
+  video.comments.push(comment._id);
+  video.save();
   return res.sendStatus(201);
 };
