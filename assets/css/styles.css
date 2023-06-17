@@ -335,11 +335,18 @@ form .edit-profile__password a {
   margin-top: 20px;
 }
 .video__comments .video__comment {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
   border-radius: 9999px;
   background-color: white;
   color: black;
   margin-bottom: 10px;
+}
+.video__comments .video__comment .delete__icon {
+  margin: 0 0 0 auto;
+  cursor: pointer;
 }
 
 a {
