@@ -11,7 +11,7 @@ module.exports = {
       commentSection: BASE_JS + "commentSection.js"
    }, //entry : "경로에 있는" 파일을 가져오고
    mode: "development",
-   watch: true, //npm run assets 로 webpack를 실행시키면 계속 할필요없이 변화를 지켜본다.
+   //watch: true, npm run assets 로 webpack를 실행시키면 계속 할필요없이 변화를 지켜본다.
    plugins: [
       new MiniCssExtractPlugin({
          filename: "css/styles.css",
