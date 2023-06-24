@@ -19,7 +19,7 @@ const videoSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    minLength: 2
+    minLength: 10
   },
   createdAt: {
     type: Date,
